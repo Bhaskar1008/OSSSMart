@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const productSchema = mongoose.Schema({
+const productSchema =new  mongoose.Schema({
     categoryid: { type: mongoose.Schema.Types.ObjectId, ref: 'Categories' },
     productname: { type: String, require },
     productdescription: { type: String, require },

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const orderDetailsSchema = mongoose.Schema({
+const orderDetailsSchema =new  mongoose.Schema({
     productid: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
     addressid: { type: mongoose.Schema.Types.ObjectId, ref: 'Address' },
     ordercreatedon: { type: Date, require },
@@ -8,7 +8,8 @@ const orderDetailsSchema = mongoose.Schema({
     paymentmode: { type: String, require },
     paymentstatus: { type: String, require },
     amountdue: { type: Number, require },
-    amountpaid: { type: Number, require }
+    amountpaid: { type: Number, require },
+    transactionDetails:{type:String,require}
 
 }, {
     timeStamps: true

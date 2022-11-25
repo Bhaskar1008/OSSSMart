@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/usermodel')
-const Otp = require('../models/otpmodel')
+const User = require('../models/Customer.schema')
+const Otp = require('../models/otp.schema')
 const otpGenerator = require('otp-generator');
 const axios = require("axios");
 

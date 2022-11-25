@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const thumbnailsSchema = mongoose.Schema({
+const thumbnailsSchema =new  mongoose.Schema({
     itemid: { type: mongoose.Schema.Types.ObjectId, ref: 'ItemConfiguration' },
     imagename: { type: String, require },
     imagelink: { type: String, require },

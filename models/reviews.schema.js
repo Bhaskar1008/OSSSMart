@@ -1,8 +1,9 @@
-const reviewsSchema = mongoose.Schema({
+const mongoose = require('mongoose')
+const reviewsSchema = new mongoose.Schema({
     productid: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
     reviewtitle: { type: String, require },
     reviewdescription: { type: String, require },
-    rating: { type: number, require },
+    rating: { type: Number, require },
     customername: { type: mongoose.Schema.Types.ObjectId, ref: 'Customers' },
 
 }, {
