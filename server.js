@@ -13,7 +13,9 @@ const Thumbnails=require('./models/Thumbnails.schema')
 app.use(express.json());
 
 const userRoute = require('./routes/customerRoute')
+const addressRoute=require('./routes/addressRoute')
 app.use('/api/users', userRoute)
+app.use('/api/address',addressRoute)
 app.get('/', (req, res) => {
     res.send('Server Working' + port)
 })

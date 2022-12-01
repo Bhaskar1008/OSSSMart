@@ -95,7 +95,7 @@ router.post('/verifyOtp', async (req, res) => {
 
     if (checkMobileNumberInOTP.length > 0) {
         const response = await axios.get(`https://2factor.in/API/V1/a6c5190d-6ee3-11ed-9c12-0200cd936042/SMS/VERIFY/${req.body.id}/${req.body.otp}`)
-        console.log(response.data,"response")
+        console.log(response.data, "response")
         if (response.data.Details === 'OTP Matched') {
             const result = await User.updateOne({ mobileNumber: req.body.number }, { $set: { password: password, confirmpassword: password } })
             console.log(result, "result")
@@ -115,7 +115,7 @@ router.post('/verifyOtp', async (req, res) => {
             message: 'OTP is Expired'
         })
     }
-   
+
 })
 
 
