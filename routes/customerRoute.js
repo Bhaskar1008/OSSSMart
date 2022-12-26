@@ -57,18 +57,17 @@ router.post('/forgotpassword', async (req, res) => {
     const { mobileNumber } = req.body
     console.log(mobileNumber, "mobileNumber")
     try {
-        const OTP = otpGenerator.generate(6, {
-            digits: true, alphabets: false, upperCase: false, specialChars: false
-        });
-        console.log(OTP);
         const number = mobileNumber
         let doc = await User.find({ mobileNumber: number })
-        await axios.post('http://api.greenweb.com.bd/api.php')
+        const response = await axios.get(`https://2factor.in/API/V1/a6c5190d-6ee3-11ed-9c12-0200cd936042/SMS/${number}/AUTOGEN`)
+        //console.log(response.data, "response")
 
         const otp = await Otp({
             mobileNumber: number,
-            otp: OTP
+            id: response.data.Details
         });
+
+        console.log(otp, "otp")
         if (doc.length > 0) {
             await otp.save();
             res.status(200).send({ message: "Otp send successfully!", otp });
@@ -76,16 +75,6 @@ router.post('/forgotpassword', async (req, res) => {
         else {
             res.status(200).send({ message: "mobile Number not Found" });
         }
-
-        // if (doc.length > 0) {
-        //     // await User.updateOne({ mobileNumber: mobileNumber }, { $set: { password: newpassword, confirmpassword: newpassword } })
-        //     // res.send('password updated successfully')
-
-
-        // }
-        // else {
-        //     res.send('Mobile Number Not Found')
-        // }
     }
     catch (err) {
         console.log(err)
@@ -94,35 +83,37 @@ router.post('/forgotpassword', async (req, res) => {
 
 })
 
-
 router.post('/verifyOtp', async (req, res) => {
     const { password } = req.body
     console.log("password", password)
-    const otpHolder = await Otp.find({
-        mobileNumber: req.body.number
+    console.log(req.body.id, req.body.number, "hello")
+    //const response = axios.get(`https://2factor.in/API/V1/a6c5190d-6ee3-11ed-9c12-0200cd936042/SMS/VERIFY/${req.body.id}/${req.body.otp}`)
+    //console.log("responseverify", response.data)
+    const checkMobileNumberInOTP = await Otp.find({
+        mobileNumber: req.body.number,
     })
-    if (otpHolder[0].otp !== req.body.otp) return res.status(400).send("Enter Correct OTP!");
-    console.log(otpHolder, "otpHolder")
 
-    const rightOtpFind = otpHolder[otpHolder.length - 1];
-    console.log(rightOtpFind, "rightotpFind")
+    if (checkMobileNumberInOTP.length > 0) {
+        const response = await axios.get(`https://2factor.in/API/V1/a6c5190d-6ee3-11ed-9c12-0200cd936042/SMS/VERIFY/${req.body.id}/${req.body.otp}`)
+        console.log(response.data, "response")
+        if (response.data.Details === 'OTP Matched') {
+            const result = await User.updateOne({ mobileNumber: req.body.number }, { $set: { password: password, confirmpassword: password } })
+            console.log(result, "result")
+            return res.status(200).send({
+                message: "Password Updated Successfully!",
+            })
 
-    if (rightOtpFind.mobileNumber === req.body.number) {
-        // const rightNumber = User.find({ mobileNumber: number })
-        // console.log(rightNumber)
-        // const user= new User.find({})
-        // const user = new User({ password: password, confirmpassword: password })
-        // await user.save()
-
-        const result = await User.updateOne({ mobileNumber: req.body.number }, { $set: { password: password, confirmpassword: password } })
-        console.log("result of ...", result)
-        return res.status(200).send({
-            message: "Password Updated Successfully!",
-        });
+        } else {
+            return res.status(400).send({
+                message: 'OTP is Mismatched'
+            })
+        }
 
     }
     else {
-        return res.status(400).send("Your OTP was wrong!")
+        return res.status(400).send({
+            message: 'OTP is Expired'
+        })
     }
 
 })
